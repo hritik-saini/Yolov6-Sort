@@ -1,7 +1,0 @@
-train: ./data/images/train
-val: ./data/images/valid
-test: ./data/images/test
-# whether it is coco dataset, only coco dataset should be set to True.
-is_coco: False
-nc: 1
-names: ['tennis-ball']
