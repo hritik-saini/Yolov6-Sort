@@ -26,13 +26,6 @@ Python 3.8 or later with all requirements.txt. To install run:
 pip install -r requirements.txt
 ```
 
-### Download YOLOv5 weights
-
-```bash
-./download_weights.sh
-```
-This script will save yolov5 weights to `yolov5/weights/` directory.
-
 ### Run Tracking
 
 To run the tracker on your own video and view the tracked bounding boxes, run:
