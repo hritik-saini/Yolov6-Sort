@@ -61,31 +61,10 @@ where
 + v_dot: time derivative of y_center in pixels
 + s_dot: time derivative of scale (area of bbox) in pixels
 
-## Implementation Details
 
-### Modifications to SORT
-
-#### 1. Class-aware Tracking
-
-The original implementation of SORT threw away YOLO's object class information (0: person, 1: bike, etc.).
-I wanted to keep that information, so I added a `detclass` attribute to `KalmanBoxTracker` object in `sort.py`:
-
-![modifications_to_sort_schematic](assets/sort-mod.png)
-
-#### 2. Kalman Filter parameters
-
-I found that for my own dataset in which bounding boxes change size fairly quickly, the default Q value (process covariance) was too low. I recommend you try experimenting with them.
-
-
-## More Complex MOTs
-If you only need to track people, or have the resources to train a model from scratch with your own dataset, then I recommend [bostom/Yolov5_DeepSort_PyTorch](https://github.com/mikel-brostrom/Yolov5_DeepSort_Pytorch).
-DeepSORT adds a separately trained neural network on top of SORT, which increases accuracy for human detections but slightly decreases performance.
-It also means that using your custom dataset involves training both YOLO and DeepSORT's 'deep association metric'
-
-For a 'bag of tricks' optimized version of YOLOv5 + DeepSORT, see [GeekAlexis/FastMOT](https://github.com/GeekAlexis/FastMOT)
 
 ## License
 
-ClassySORT is released under the GPL License version 3 to promote the open use of the tracker and future improvements.
+YOLOv6-SORT is released under the GPL License version 3 to promote the open use of the tracker and future improvements.
 Among other things, this means that code from this repository cannot be used for closed source distributions,
 and you must license any derived code as GPL3 as well.
