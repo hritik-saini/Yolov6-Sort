@@ -1,28 +1,15 @@
-# ℂ𝕝𝕒𝕤𝕤𝕪𝕊𝕆ℝ𝕋
+# YOLOv6-SORT 
 
-by [Jason Sohn (website: jasonsohn.com)](https://jasonsohn.com)
-
-ClassySORT is a simple real-time multi-object tracker (MOT) that works for any kind of object class (not just people).
-
-![demo-footage](assets/velon-2019-creds.gif)
+Yolov6-Sort is a simple real-time tracker for Tennis-Ball.
 
 ## Introduction
 
-ClassySORT is designed to be a state-of-the-art (SOTA) multi-object tracker (MOT) for use on your own projects. And bcause the You-only-look-once algorithm (YOLO) detector is pretrained on COCO dataset, ClassySORT can detect and count and track 80 different kinds of common objects 'out of the box'.
+**YOLOv6-SORT Uses : ** 
++  [tensorturtle/classy-sort-yolov5](https://github.com/tensorturtle/classy-sort-yolov5) with modifications include( Replacing Yolov5 - with Yolov6 ) 
++  [meituan/YOLOv6](https://github.com/meituan/YOLOv6)  with minor modifications (Used for training YOLOv6 on Tennis-Ball Dataset)
++  [abewley/SORT](https://github.com/abewley/sort) with minor modifications 
 
-Tested on Pop_OS! 20.04 (similar to Ubuntu) and NVIDIA RTX 2070s.
-
-Modifying it is exactly the same process as training YOLOv5 with your own dataset. [How do I do that?](https://github.com/ultralytics/yolov5/wiki/Train-Custom-Data)
-
-**ClassySORT implements** 
-+ [ultralytics/YOLOv5](https://github.com/ultralytics/yolov5/wiki) with no modifications
-+ [abewley/SORT](https://github.com/abewley/sort) with minor modifications 
-
-This repository uses a fixed version of YOLOv5 to ensure compatbility. Replacing the YOLOv5 code to the updated ultralytics/YOLOv5 code may result in breaking changes. If you are able to this without issues, please submit a pull request.
-
-If you only need to track people, or have the resources to train a model from scratch with your own dataset, see 'More Complex MOTs' section below.
-
-## Using ClassySORT
+## Using YOLOv6-SORT
 
 Clone this repository
 
