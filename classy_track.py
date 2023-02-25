@@ -196,7 +196,7 @@ if __name__ == '__main__':
     
     # file/folder, 0 for webcam
     parser.add_argument('--source', type=str,
-                        default='yolov6/weights/VID_20221227_152211.mp4', help='source')
+                        default='Inputvideo/VID_20221227_152211.mp4', help='source')
     parser.add_argument('--output', type=str, default='output',
                         help='output folder')  # output folder
     parser.add_argument('--img-size', type=int, default=1600,
