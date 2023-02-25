@@ -14,8 +14,8 @@ Yolov6-Sort is a simple real-time tracker for Tennis-Ball.
 Clone this repository
 
 ```bash
-git clone https://github.com/tensorturtle/classy-sort-yolov5.git
-cd classy-sort-yolov5
+git clone https://github.com/hritik-saini/Yolov6-Sort.git
+cd Yolov6-Sort
 ```
 
 ### Install Requirements
