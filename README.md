@@ -4,7 +4,7 @@ Yolov6-Sort is a simple real-time tracker for Tennis-Ball.
 
 ## Introduction
 
-**YOLOv6-SORT Uses : ** 
+**YOLOv6-SORT Uses** 
 +  [tensorturtle/classy-sort-yolov5](https://github.com/tensorturtle/classy-sort-yolov5) with modifications include( Replacing Yolov5 - with Yolov6 ) 
 +  [meituan/YOLOv6](https://github.com/meituan/YOLOv6)  with minor modifications (Used for training YOLOv6 on Tennis-Ball Dataset)
 +  [abewley/SORT](https://github.com/abewley/sort) with minor modifications 
