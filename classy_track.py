@@ -1,6 +1,9 @@
 # Loading packages
 import argparse
+import csv
 import os
+import sys
+
 import cv2
 import time
 import torch
@@ -14,15 +17,15 @@ from yolov6.data.datasets import LoadData
 from yolov6.utils.nms import non_max_suppression
 
 # SORT
-from ClassySortYolov6.sort.sort import Sort
-from ClassySortYolov6.utils import check_img_size, precess_image, CalcFPS, rescale, plot_box_and_label, generate_colors, draw_text, model_switch
+from sort.sort import Sort
+from utils import check_img_size, precess_image, CalcFPS, rescale, plot_box_and_label, generate_colors, draw_text, model_switch
 
 
 # Funcition which will return Yolov6-detection, Sort Output & Final Output Video
 
 def detect(opt):
-    out, source, weights, view_img, save_txt, imgsz, save_img, sort_max_age, sort_min_hits, sort_iou_thresh, conf_thres, iou_thres = \
-        opt.output, opt.source, opt.weights, opt.view_img, opt.save_txt, opt.img_size, opt.save_img, opt.sort_max_age, opt.sort_min_hits, opt.sort_iou_thresh, opt.conf_thres, opt.iou_thres
+    out, outVid ,  source, weights, view_img, save_txt, imgsz, save_img, sort_max_age, sort_min_hits, sort_iou_thresh, conf_thres, iou_thres = \
+        opt.output, opt.outputVideo ,opt.source, opt.weights, opt.view_img, opt.save_txt, opt.img_size, opt.save_img, opt.sort_max_age, opt.sort_min_hits, opt.sort_iou_thresh, opt.conf_thres, opt.iou_thres
 
     # Initialize SORT
     sort_tracker = Sort(max_age=sort_max_age,
@@ -49,6 +52,7 @@ def detect(opt):
     # Set DataLoader
     dataset = LoadData(source)
 
+
     # Run Inference
     fps_calculator = CalcFPS()
     save_path, vid_writer, windows = None, None, []
@@ -67,12 +71,15 @@ def detect(opt):
         dets_to_sort = np.empty((0, 6))  # Initial Input for Sort
 
         ## Creating the required Output directory
-        dir_yolov6 = Path(out + '/yolov6_output')
+
+        cwd = os.getcwd()
+        dir_yolov6 = Path(cwd + out + '/yolov6_output')
+        print(dir_yolov6)
         if os.path.exists(dir_yolov6):
             pass
         else:
             os.mkdir(dir_yolov6)
-        dir_sort = Path(out + '/sort_output')
+        dir_sort = Path(cwd + out + '/sort_output')
         if os.path.exists(dir_sort):
             pass
         else:
@@ -120,7 +127,8 @@ def detect(opt):
                                 cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)  # allow window resize (Linux)
                 cv2.resizeWindow(str(img_path), 1496, 800)
             cv2.imshow(str(img_path), img_src)
-            cv2.waitKey(1)  # 1 millisecond
+            if cv2.waitKey(25) & 0xFF == ord('q'):
+                break
 
         if save_img:
             if dataset.type == 'image':
@@ -133,8 +141,8 @@ def detect(opt):
                         w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
                         h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
                     else:  # stream
-                        fps, w, h = 30, img_ori.shape[1], img_ori.shape[0]
-                    vid_writer = cv2.VideoWriter(str(save_path)+"\output.mp4", cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
+                        fps, w, h = 25, img_ori.shape[1], img_ori.shape[0]
+                    vid_writer = cv2.VideoWriter(str(save_path) + "\\" +  str(outVid), cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
                 vid_writer.write(img_src)
 
         ## Sort algorithm start here
@@ -180,7 +188,7 @@ def detect(opt):
         #                 h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         #             else:  # stream
         #                 fps, w, h = 30, img_ori.shape[1], img_ori.shape[0]
-        #             vid_writer = cv2.VideoWriter(str(save_path) + "\output.mp4", cv2.VideoWriter_fourcc(*'mp4v'), fps,
+        #             vid_writer = cv2.VideoWriter(str(save_path) + "\output.mp4", fourcc, fps,
         #                                          (w, h))
         #         vid_writer.write(img0)
 
@@ -195,11 +203,11 @@ if __name__ == '__main__':
                         default='yolov6/weights/Yolov6best500complete.pt', help='model.pt path')
     
     # file/folder, 0 for webcam
-    parser.add_argument('--source', type=str,
-                        default='Inputvideo/VID_20221227_152211.mp4', help='source')
-    parser.add_argument('--output', type=str, default='output',
+    parser.add_argument('--source', type=str, help='source')
+    parser.add_argument('--output', type=str, default='/Videooutput',
                         help='output folder')  # output folder
-    parser.add_argument('--img-size', type=int, default=1600,
+    parser.add_argument('--outputVideo', type=str, help='outputVideo Name')  # output Video Name
+    parser.add_argument('--img-size', type=int, default=1080,
                         help='inference size (pixels)')
     parser.add_argument('--conf-thres', type=float,
                         default=0.5, help='object confidence threshold')
@@ -232,7 +240,6 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     args.img_size = check_img_size(args.img_size)
-    print(args)
 
     with torch.no_grad():
         detect(args)
