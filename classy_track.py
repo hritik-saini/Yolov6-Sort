@@ -1,4 +1,4 @@
-# packages
+# Loading packages
 import argparse
 import os
 import cv2
@@ -8,16 +8,17 @@ import numpy as np
 from tqdm import tqdm
 from pathlib import Path
 
-# yolov6
+# Yolov6
 from yolov6.layers.common import DetectBackend
 from yolov6.data.datasets import LoadData
 from yolov6.utils.nms import non_max_suppression
 
-# sort
+# SORT
 from ClassySortYolov6.sort.sort import Sort
-from ClassySortYolov6.utils import check_img_size, precess_image, CalcFPS, rescale, plot_box_and_label, generate_colors, \
-    draw_text, model_switch
+from ClassySortYolov6.utils import check_img_size, precess_image, CalcFPS, rescale, plot_box_and_label, generate_colors, draw_text, model_switch
 
+
+# Funcition which will return Yolov6-detection, Sort Output & Final Output Video
 
 def detect(opt):
     out, source, weights, view_img, save_txt, imgsz, save_img, sort_max_age, sort_min_hits, sort_iou_thresh, conf_thres, iou_thres = \
@@ -28,10 +29,13 @@ def detect(opt):
                         min_hits=sort_min_hits,
                         iou_threshold=sort_iou_thresh)
 
-    # Directory and CUDA settings for yolov5
+    # Directory and CUDA settings for Yolov6
+    
     device = torch.device(opt.device)
     half = device.type != 'cpu'  # half precision only supported on CUDA
-
+    
+    # Variable for Yolov6 Inference
+    
     class_names = 'tennis-ball'
     classes = None
     agnostic_nms = None
@@ -39,14 +43,13 @@ def detect(opt):
     model = DetectBackend(weights, device=device)
     stride = model.stride
 
-    ## use in inference for yolov6
     model_switch(model.model, imgsz)
     model.model.float()
 
     # Set DataLoader
     dataset = LoadData(source)
 
-    # Run inference
+    # Run Inference
     fps_calculator = CalcFPS()
     save_path, vid_writer, windows = None, None, []
     for img_src, img_path, vid_cap in tqdm(dataset):
@@ -58,13 +61,12 @@ def detect(opt):
         t1 = time.time()
         result = model(img)
         det = non_max_suppression(result, conf_thres, iou_thres, classes, agnostic_nms, max_det=max_det)[0]
-        print(det)
         t2 = time.time()
         img_ori = img_src.copy()
         img_ori_sort = img_src.copy()
-        dets_to_sort = np.empty((0, 6))  # initial input for sort
+        dets_to_sort = np.empty((0, 6))  # Initial Input for Sort
 
-        ## Creating the required directory
+        ## Creating the required Output directory
         dir_yolov6 = Path(out + '/yolov6_output')
         if os.path.exists(dir_yolov6):
             pass
@@ -79,7 +81,8 @@ def detect(opt):
         if len(det):
             det[:, :4] = rescale(img.shape[2:], det[:, :4], img_src.shape).round()
 
-            ## plotting original detection by yolov6 and creating array for passing to sort
+            ## Plotting original detection by yolov6 and creating array for passing to Sort
+            
             for *xyxy, conf, detclass in reversed(det):
                 x1, y1, x2, y2 = xyxy
                 if save_img:
@@ -94,7 +97,9 @@ def detect(opt):
         fps_calculator.update(1.0 / (t2 - t1))
         avg_fps = fps_calculator.accumulate()
 
-        ### If you want to save the YOLOv6 inference results only un-comment the below lines and comment-out the Sort algorithm part
+        # 1. Commenting the Sort part for saving YOLOv6 Output Video Only.
+        # 2. If you want to save Sort Output Result comment the YOLOv6 Part and un-comment Sort Part.
+        
         ## For yolov6 inference results only
 
         if dataset.type == 'video':
@@ -117,8 +122,6 @@ def detect(opt):
             cv2.imshow(str(img_path), img_src)
             cv2.waitKey(1)  # 1 millisecond
 
-        # Save results (image with detections)
-
         if save_img:
             if dataset.type == 'image':
                 cv2.imwrite(save_path, img_src)
@@ -134,7 +137,7 @@ def detect(opt):
                     vid_writer = cv2.VideoWriter(str(save_path)+"\output.mp4", cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
                 vid_writer.write(img_src)
 
-        ### Sort algorithm start here
+        ## Sort algorithm start here
 
         # passing yolov6 detections to sort
         # tracked_dets = sort_tracker.update(dets_to_sort)
@@ -190,6 +193,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--weights', type=str,
                         default='yolov6/weights/Yolov6best500complete.pt', help='model.pt path')
+    
     # file/folder, 0 for webcam
     parser.add_argument('--source', type=str,
                         default='yolov6/weights/VID_20221227_152211.mp4', help='source')
